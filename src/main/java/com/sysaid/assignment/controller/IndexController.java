@@ -13,19 +13,13 @@ public class IndexController implements ErrorController{
 
     @GetMapping("/home")
     public String home() {
-        return "index"; // Not "index.html" or "/index.html"
+        return "index";
     }
 
     @RequestMapping(value = PATH)
     public String error() {
-        // Provide the name of your custom error view (e.g., "error")
+        // Provide the name of your custom error
         return "error";
     }
-
-    @Override
-    public String getErrorPath() {
-        return PATH;
-    }
-
 
 }

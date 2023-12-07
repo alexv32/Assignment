@@ -33,9 +33,12 @@ public class TaskServiceImpl implements  ITaskService{
 
     public ResponseEntity<List<Task>> getUncompletedTask(String username) throws CustomException{
         User user=userRepository.findByUsername(username);
-        List<Task> incompleteTasks= taskRepository.findByUserAndCompletedFalse(user).subList(0, 10);
+        List<Task> incompleteTasks= taskRepository.findByUserAndCompletedFalse(user);
+
         if(incompleteTasks.isEmpty()){
             throw new CustomException("No Uncompleted Tasks");
+        }else if(incompleteTasks.size()>=10){
+            return new ResponseEntity<>(incompleteTasks.subList(0, 10),HttpStatus.OK);
         }
         
         return new ResponseEntity<>(incompleteTasks,HttpStatus.OK);

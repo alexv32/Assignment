@@ -11,9 +11,9 @@ public interface ITaskService {
     public ResponseEntity<List<Task>> getWishlistedTask(String username) throws CustomException;
     public ResponseEntity<List<Task>> getUnWishlistedTask(String username) throws CustomException;
     public ResponseEntity<List<Task>> getAllTasks(String username) throws CustomException;
-    public void createTask(String username) throws CustomException;
-    public void deleteTask(String username,String key) throws CustomException;
-    public void completeTask(String username, String key) throws CustomException;
-    public void wishlistTask(String username, String key) throws CustomException;
+    public void createTask(String username);
+    public void deleteTask(String username,String key);
+    public void completeTask(String username, String key);
+    public void wishlistTask(String username, String key);
     public Task getTasksByRating(String username) throws CustomException;
 }

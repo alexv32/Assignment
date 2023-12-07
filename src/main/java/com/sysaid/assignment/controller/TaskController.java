@@ -171,7 +171,7 @@ public class TaskController {
 	public void deleteUnwishlistedTaskForUser(@PathVariable ("user") String user, @RequestParam(name = "key",required = true) String key){
 		taskService.deleteTask(user, key);
 	} 
-	*/
+	
 	
 
 	

@@ -1,33 +1,35 @@
 package com.sysaid.assignment.domain;
 
-import java.io.Serializable;
+
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
 @Entity
-public class User implements Serializable{
+public class User{
 
-    
-    private int id;
-    @Id
+    @Id  
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(unique = true)
     private String username;
+    @Column(nullable = false)
+    private String password;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Task> tasks = new ArrayList<>();
 
-    public User(){
-        this.id=0;
-        this.username=null;
-    }
-    public User(String username){
+    public User(String username, String password){
         this.username=username;
+        this.password=password;
     }
-    public int getId(){
+    public Long getId(){
         return this.id;
     }
 
@@ -42,4 +44,12 @@ public class User implements Serializable{
     public List<Task> getTasks(){
         return this.tasks;
     }
+   
+    public String getPassword() {
+        return this.password;
+    }
+    public void setPassword(String password){
+        this.password=password;
+    }
+    
 }
