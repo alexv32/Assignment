@@ -1,12 +1,13 @@
 package com.sysaid.assignment.domain;
-
 import java.io.Serializable;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
-/**
- * representing simple task
- */
-public class Task implements Serializable {
+@Entity
+public class Task implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 
@@ -16,10 +17,25 @@ public class Task implements Serializable {
 	private Integer participants;
 	private Float price;
 	private String link;
+	@Id
 	private String key;
 	private boolean completed=false;
 	private boolean wishlist=false;
 	private int rate=0;
+
+	@ManyToOne
+	@JoinColumn(name = "user_id")
+	private User user;
+	
+	public Task(Task task){
+		this.activity=task.activity;
+		this.accessibility=task.accessibility;
+		this.type=task.type;
+		this.participants=task.participants;
+		this.price=task.price;
+		this.link=task.link;
+		this.key=task.key;
+	}
 
 	public static long getSerialVersionUID() {
 		return serialVersionUID;
@@ -97,10 +113,16 @@ public class Task implements Serializable {
 		return rate;
 	}
 	public void setRate(int rate) {
-		this.rate = rate;
+		this.rate += rate;
 	}
 
+	public void setUser(User user){
+		this.user=user;
+	}
 
+	public User getUser(){
+		return user;
+	}
 
 }
 
