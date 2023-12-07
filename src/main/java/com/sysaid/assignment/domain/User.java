@@ -12,8 +12,6 @@ import javax.persistence.OneToMany;
 @Entity
 public class User implements Serializable{
 
-    private static final long serialVersionUID = 1L;
-
     
     private int id;
     @Id
@@ -22,6 +20,10 @@ public class User implements Serializable{
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Task> tasks = new ArrayList<>();
 
+    public User(){
+        this.id=0;
+        this.username=null;
+    }
     public User(String username){
         this.username=username;
     }

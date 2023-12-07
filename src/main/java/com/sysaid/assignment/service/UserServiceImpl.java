@@ -10,12 +10,15 @@ public class UserServiceImpl implements UserService{
    
 
     
-    private UserRepository userRepository;
-    
+    private final UserRepository userRepository;
+    public UserServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     public User login(String username){
         User user= userRepository.findByUsername(username);
 
-        if(user.equals(null)){
+        if(user==null){
             user=new User(username);
             userRepository.save(user);
         }

@@ -1,8 +1,7 @@
 package com.sysaid.assignment.service;
 
-import org.springframework.stereotype.Service;
+import com.sysaid.assignment.domain.User;
 
-@Service
 public interface UserService {
-    
+    public User loginDetails(String username);
 }

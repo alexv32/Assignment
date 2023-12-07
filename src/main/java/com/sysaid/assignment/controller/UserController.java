@@ -1,16 +1,17 @@
 package com.sysaid.assignment.controller;
 
 
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import com.sysaid.assignment.domain.User;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import com.sysaid.assignment.service.UserServiceImpl;
 
-@RestController
+@Controller
+@RequestMapping("/api")
 public class UserController {
     
    
@@ -24,10 +25,17 @@ public class UserController {
 		this.userService = userService;
 	}
 
-    @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody String username){
-        User loggedIn = userService.login(username);
-
-        return new ResponseEntity<>(loggedIn, HttpStatus.OK);
+    @GetMapping("/login")
+    public String showLoginForm() {
+        return "login";
     }
+
+    @PostMapping("/login")
+    public String processLogin(@RequestParam String username, Model model) {
+        // Do something with the username (e.g., store it in a session attribute)
+        model.addAttribute("username", username);
+        return "redirect:/dashboard"; // Redirect to a dashboard page
+    }
+
+
 }

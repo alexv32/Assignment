@@ -27,6 +27,16 @@ public class Task implements Serializable{
 	@JoinColumn(name = "user_id")
 	private User user;
 	
+	public Task(){
+		this.activity=null;
+		this.accessibility=(float) 0;
+		this.type=null;
+		this.participants=0;
+		this.price=(float) 0;
+		this.link=null;
+		this.key=null;
+
+	}
 	public Task(Task task){
 		this.activity=task.activity;
 		this.accessibility=task.accessibility;
