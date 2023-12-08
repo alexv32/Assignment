@@ -54,8 +54,6 @@ public class TaskServiceImpl implements  ITaskService{
      */
     public ResponseEntity<List<Task>> getUncompletedTask(String username, String type) throws CustomException{
         User user=userRepository.findByUsername(username);
-        System.out.println("The type is:");
-        System.out.println(type);
         List<Task> incompleteTasks= new ArrayList<>();
         if (type==null) {
             incompleteTasks=taskRepository.findByUserAndCompletedFalse(user);
