@@ -1,14 +1,20 @@
 package com.sysaid.assignment.domain;
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 @Entity
+@Table(name="task")
 public class Task implements Serializable{
 
 	private static final long serialVersionUID = 1L;
@@ -21,13 +27,20 @@ public class Task implements Serializable{
 	private Integer participants;
 	private Float price;
 	private String link;
+	@Column(name="task_key")
 	private String key;
 	private boolean completed=false;
 	private boolean wishlist=false;
 	private int rate=0;
 
+	/**
+	 * Many tasks to one use relationship
+	 * Joining table columns with the username column
+	 * JsonIgnore the field so it will not pull it on any Get request
+	 */
 	@ManyToOne
-	@JoinColumn(name = "username",nullable = false)
+	@JoinColumn(name = "username", referencedColumnName = "username")
+	@JsonIgnore
 	private User user;
 	
 	public Task(){
@@ -50,6 +63,10 @@ public class Task implements Serializable{
 		this.key=task.key;
 	}
 
+	/**
+	 * A bunch of getters and setters for any of the attributes
+	 * 
+	 */
 	public static long getSerialVersionUID() {
 		return serialVersionUID;
 	}
@@ -125,6 +142,10 @@ public class Task implements Serializable{
 	public int getRate() {
 		return rate;
 	}
+	/**
+	 * Rate updates for every action done on the object
+	 * @param rate
+	 */
 	public void setRate(int rate) {
 		this.rate += rate;
 	}

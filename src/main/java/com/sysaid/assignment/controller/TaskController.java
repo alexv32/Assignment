@@ -6,15 +6,16 @@ import com.sysaid.assignment.service.TaskServiceImpl;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-//import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * the controller is a basic structure and save some time on "dirty" work.
@@ -31,6 +32,7 @@ public class TaskController {
 	 * constructor for dependency injection
 	 * @param taskService
 	 */
+	@Autowired
 	public TaskController(TaskServiceImpl taskService) {
 		this.taskService = taskService;
 	}
@@ -56,7 +58,7 @@ public class TaskController {
 	@GetMapping("/uncompleted-tasks/{user}")
 	public ResponseEntity<List<Task>> getUncompletedTasks(@PathVariable ("user") String user, @RequestParam(name = "type",required = false) String type) throws CustomException{
 		
-		return taskService.getUncompletedTask(user);
+		return taskService.getUncompletedTask(user,type);
 	}
 
 	/**
@@ -69,65 +71,82 @@ public class TaskController {
 	public ResponseEntity<List<Task>> getCompletedTasks(@PathVariable ("user") String user) throws CustomException{
 		return taskService.getCompletedTask(user);
 	}
-
-	
 	/**
 	 * Returns all wishlisted tasks
 	 * @param user
 	 * @param type
-	 * @return
-	 * @throws CustomException
+	 * @return all wishlisted tasks
+	 * @throws CustomException if there are no tasks
 	 */
 	@GetMapping("/wishlisted-tasks/{user}")
-	public ResponseEntity<List<Task>> getWishlistedTasks(@PathVariable ("user") String user, @RequestParam(name = "type",required = false) String type) throws CustomException{
+	public ResponseEntity<List<Task>> getWishlistedTasks(@PathVariable ("user") String user) throws CustomException{
 		
 		return taskService.getWishlistedTask(user);
 	}
 	/**
 	 * Returns all unwishlisted tasks
 	 * @param user
-	 * @return
-	 * @throws CustomException
+	 * @return all tasks that are not wishlisted
+	 * @throws CustomException if there are no tasks
 	 */
 	@GetMapping("/unwishlisted-tasks/{user}")
 	public ResponseEntity<List<Task>> getUnWishlistedTasks(@PathVariable ("user") String user) throws CustomException{
 		return taskService.getUnWishlistedTask(user);
 	}
 	/**
+	 * 
+	 * @param user
+	 * @return the rated task by the rating set in the assisgment(20% first, 20% second, 10% third, 5% fourth,5% fifth, 40% random task from the list)
+	 * @throws CustomException if there are no tasks
+	 */
+	@GetMapping("/rated/{user}")
+	public ResponseEntity<Task> getRatedTasks(@PathVariable ("user") String user) throws CustomException{
+		return taskService.getTasksByRating(user);
+	}
+
+	/**
 	 * Creates a new task for the user,
 	 * @param user
+	 * @return return a response on success that the task was created
 	 */
-	@PutMapping("/all-tasks/{user}")
-	public void createTaskForUser(@PathVariable ("user") String user){
+	@PostMapping(path={"/completed-tasks/{user}","/wishlisted-tasks/{user}","/unwishlisted-tasks/{user}","/uncompleted-tasks/{user}","/all-tasks/{user}","/rated/{user}"})
+	public ResponseEntity<String> createTaskForUser(@PathVariable ("user") String user){
 		taskService.createTask(user);
+		return ResponseEntity.ok("Task Created");
 	}
 	/**
 	 * Set a certain task as completed for the user
 	 * @param user
 	 * @param key
-	 */
-	@PutMapping("/uncompleted-tasks/{user}/{task_key}")
-	public void updateCompletedTaskForUser(@PathVariable ("user") String user, @RequestParam(name = "key",required = true) String key){
+	 * @return return a response on success that the task was completed
+	 */ 
+	@PutMapping("/uncompleted-tasks/{user}")
+	public ResponseEntity<String> updateCompletedTaskForUser(@PathVariable ("user") String user, @RequestParam(name = "task_key",required = true) String key){
 		taskService.completeTask(user, key);
+		return ResponseEntity.ok("Task Completed");
 	}
 	/**
 	 * Wishlist a certain user task
-	 * @param user
-	 * @param key
+	 * @param user current user
+	 * @param key	the task key we would like to wishlist
+	 * @return return a response on success that the task was wishlisted
 	 */
-	@PutMapping("/unwishlisted-tasks/{user}/{task_key}")
-	public void updateWishlistTaskForUser(@PathVariable ("user") String user, @RequestParam(name = "key",required = true) String key){
+	@PutMapping("/unwishlisted-tasks/{user}")
+	public ResponseEntity<String> updateWishlistTaskForUser(@PathVariable ("user") String user, @RequestParam(name = "task_key",required = true) String key){
 		taskService.wishlistTask(user, key);
+		return ResponseEntity.ok("Task Wishlisted");
 	}
 	
 	/**
-	 * Delete a certain task
+	 * Delete a certain task for a user, from every path available
 	 * @param user
-	 * @param key
+	 * @param key the task key we want to delete
+	 * @return return a response on success that the task was deleted
 	 */
-	@DeleteMapping("/all-tasks/{user}/{task_key}")
-	public void deleteTaskForUser(@PathVariable ("user") String user, @RequestParam(name = "key",required = true) String key){
+	@DeleteMapping(path={"/completed-tasks/{user}","/wishlisted-tasks/{user}","/unwishlisted-tasks/{user}","/uncompleted-tasks/{user}","/all-tasks/{user}","/rated/{user}"})
+	public ResponseEntity<String> deleteTaskForUser(@PathVariable ("user") String user, @RequestParam(name = "task_key",required = true) String key){
 		taskService.deleteTask(user, key);
+		return ResponseEntity.ok("Task Deleted");
 	}
 
 	/**
@@ -139,43 +158,6 @@ public class TaskController {
 		//example of service use
 		return taskService.getRandomTask();
 	}
-
-
-	//Probably irrelevant tasks:
-	/**
-	 * Delete an incomplete task for the user
-	 * @param user
-	 * @param key
-	 */
-	@DeleteMapping("/uncompleted-tasks/{user}/{task_key}")
-	public void deleteIncompleteTaskForUser(@PathVariable ("user") String user, @RequestParam(name = "key",required = true) String key){
-		taskService.deleteTask(user, key);
-	}
-	/**
-	 * delete a completed task for the user
-	 * @param user
-	 * @param key
-	 */
-	
-	@DeleteMapping("/completed-tasks/{user}/{task_key}")
-	public void deleteCompleteTaskForUser(@PathVariable ("user") String user, @RequestParam(name = "key",required = true) String key){
-		taskService.deleteTask(user, key);
-	}
-
-	@DeleteMapping("/wishlisted-tasks/{user}/{task_key}")
-	public void deleteWishlistedTaskForUser(@PathVariable ("user") String user, @RequestParam(name = "key",required = true) String key){
-		taskService.deleteTask(user, key);
-	}
-
-	@DeleteMapping("/unwishlisted-tasks/{user}/{task_key}")
-	public void deleteUnwishlistedTaskForUser(@PathVariable ("user") String user, @RequestParam(name = "key",required = true) String key){
-		taskService.deleteTask(user, key);
-	} 
-	
-	
-
-	
-
 
 }
 
